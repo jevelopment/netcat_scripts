@@ -12,8 +12,14 @@ PORT=12345
 echo "Drag and drop the file you want to send into the terminal and press Enter:"
 read FILE_TO_SEND
 
-# Send the file using netcat
-echo "Sending $FILE_TO_SEND to $GUEST_IP on port $PORT..."
-nc $GUEST_IP $PORT < "$FILE_TO_SEND"
+# Remove surrounding quotes if they exist
+FILE_TO_SEND=$(echo "$FILE_TO_SEND" | tr -d "'\"")
 
-echo "File sent."
+# Send the file using netcat
+if [ -f "$FILE_TO_SEND" ]; then
+    echo "Sending $FILE_TO_SEND to $GUEST_IP on port $PORT..."
+    nc $GUEST_IP $PORT < "$FILE_TO_SEND"
+    echo "File sent."
+else
+    echo "Error: File '$FILE_TO_SEND' does not exist."
+fi
